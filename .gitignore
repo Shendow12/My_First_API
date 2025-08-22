@@ -1,0 +1,30 @@
+# Python cache files
+*.pyc
+__pycache__/
+
+# Virtual environment
+venv/
+env/
+.env
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python egg / build files
+*.egg-info/
+dist/
+build/
+
+# Optional: pipenv / poetry files
+Pipfile.lock
+poetry.lock
