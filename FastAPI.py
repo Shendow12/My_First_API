@@ -4,59 +4,74 @@ from typing import List, Optional
 
 app = FastAPI()
 
-class Item(BaseModel):
+class Job(BaseModel):
     name: str
-    price: float
-    brand: Optional[str] = None
+    description: str
+    slary: float
+    type: str
 
-class UpdateItem(BaseModel):
+class UpdateJob(BaseModel):
     name: Optional[str] = None
-    price: Optional[float] = None
-    brand: Optional[str] = None
+    description: Optional[str] = None
+    slary: Optional[float] = None
+    type: Optional[str] = None
 
+class CustomerIDGenerator:
+    def __init__(self, start=0):
+        self.counter = start
+
+    def generate_customer_id(self):
+        self.counter += 1
+        return f"{self.counter}"
+
+id_generator = CustomerIDGenerator(start=0)
+   
 inventory = {}
 
-@app.get("/get-item/{item_id}")
-def get_item(item_id: int = Path(..., description="The ID of the item you would like to view")):
-    if item_id not in inventory:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item ID not found")
-    return inventory[item_id]
+@app.get("/get-job/{job_id}")
+def get_job(job_id: str = Path(..., description="The ID of the job you would like to view")):
+    if job_id not in inventory:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job ID not found")
+    return inventory[job_id]
 
 @app.get("/get-by-name")
-def get_item_by_name(name: str = Query(None, title="Name", description="Name of item")):
-    for item_id in inventory:
-        if inventory[item_id].name == name:
-            return inventory[item_id]
+def get_job_by_name(name: str = Query(None, title="Name", description="Name of job")):
+    for job_id in inventory:
+        if inventory[job_id].name == name:
+            return inventory[job_id]
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item name not found")
 
-@app.post("/create-item/{item_id}")
-def create_item(item_id: int, item: Item):
-    if item_id in inventory:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Item ID already exists")
+@app.post("/create-job")
+def create_job(job: Job):
+   
+    job_id = id_generator.generate_customer_id()
+    
+    inventory[job_id] = job
+    return {"id": job_id, "job": inventory[job_id]}
 
-    inventory[item_id] = item
-    return inventory[item_id]
+@app.put("/update-job/{job_id}")
+def update_job(job_id: str, job: UpdateJob):
+    if job_id not in inventory:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job ID does not exist")
 
-@app.put("/update-item/{item_id}")
-def update_item(item_id: int, item: UpdateItem):
-    if item_id not in inventory:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item ID does not exist")
+    if job.name is not None:
+        inventory[job_id].name = job.name
 
-    if item.name is not None:
-        inventory[item_id].name = item.name
+    if job.description is not None:
+        inventory[job_id].description = job.description
 
-    if item.price is not None:
-        inventory[item_id].price = item.price
+    if job.slary is not None:
+        inventory[job_id].slary = job.slary
 
-    if item.brand is not None:
-        inventory[item_id].brand = item.brand
+    if job.type is not None:
+        inventory[job_id].type = job.type
 
-    return inventory[item_id]
+    return inventory[job_id]
 
-@app.delete("/delete-item")
-def delete_item(item_id: int = Query(..., description="The ID of the item to delete")):
-    if item_id not in inventory:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item ID does not exist")
+@app.delete("/delete-job")
+def delete_job(job_id: str = Query(..., description="The ID of the job to delete")):
+    if job_id not in inventory:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job ID does not exist")
 
-    del inventory[item_id]
-    return {"Success": "Item deleted"}
+    del inventory[job_id]
+    return {"Success": "Job deleted"}
