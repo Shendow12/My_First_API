@@ -7,13 +7,13 @@ app = FastAPI()
 class Job(BaseModel):
     name: str
     description: str
-    slary: float
+    pay: float
     type: str
 
 class UpdateJob(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    slary: Optional[float] = None
+    pay: Optional[float] = None
     type: Optional[str] = None
 
 class CustomerIDGenerator:
@@ -60,8 +60,8 @@ def update_job(job_id: str, job: UpdateJob):
     if job.description is not None:
         inventory[job_id].description = job.description
 
-    if job.slary is not None:
-        inventory[job_id].slary = job.slary
+    if job.pay is not None:
+        inventory[job_id].pay = job.pay
 
     if job.type is not None:
         inventory[job_id].type = job.type
