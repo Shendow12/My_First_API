@@ -28,7 +28,7 @@ id_generator = CustomerIDGenerator(start=0)
    
 inventory = {}
 
-@app.get("/get-job/{job_id}")
+@app.get("/{job_id}")
 def get_job(job_id: str = Path(..., description="The ID of the job you would like to view")):
     if job_id not in inventory:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job ID not found")
