@@ -28,6 +28,10 @@ id_generator = CustomerIDGenerator(start=0)
    
 inventory = {}
 
+@app.get("/")
+def status_salata():
+    return "hello"
+
 @app.get("/{job_id}")
 def get_job(job_id: str = Path(..., description="The ID of the job you would like to view")):
     if job_id not in inventory:
